@@ -1,1 +1,9 @@
+version: '3'
 
+services:
+  permissions:
+    container_name: "permissions-service"
+    image: ghcr.io/ingsis-jcli/permissions:latest
+    environment:
+      USERNAME: "${GITHUB_ACTOR}"
+      TOKEN: "${GITHUB_TOKEN}"
