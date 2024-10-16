@@ -49,3 +49,17 @@ services:
       POSTGRES_DB: "${P_POSTGRES_DB}"
     ports:
       - "${P_POSTGRES_PORT}:5432"
+
+  printscript:
+    container_name: "infra-printscript-api"
+    image: ghcr.io/ingsis-jcli/printscript-dev:latest
+    environment:
+      GITHUB_ACTOR: "${GITHUB_ACTOR}"
+      GITHUB_TOKEN: "${GITHUB_TOKEN}"
+      PORT: "${PORT}"
+      AUTH0_AUDIENCE: "${AUTH0_AUDIENCE}"
+      AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
+      AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
+      AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
+    ports:
+      - "${PS_PORT}:${PORT}"
