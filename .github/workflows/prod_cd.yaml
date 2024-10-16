@@ -21,7 +21,7 @@ jobs:
           script: |
             pwd
             cd infra
-            git pull origin dev
+            git pull origin main
             echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login -u ${{ github.actor }} --password-stdin ghcr.io
             sudo docker-compose -f docker-compose.prod.yml down
             sudo docker-compose -f docker-compose.prod.yml pull
