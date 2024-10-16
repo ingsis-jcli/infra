@@ -1,4 +1,3 @@
-version: '3'
 
 services:
   snippets:
@@ -11,6 +10,10 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: "${S_POSTGRES_DB}"
       POSTGRES_HOST: "${S_POSTGRES_HOST}"
+      AUTH0_AUDIENCE: "${AUTH0_AUDIENCE}"
+      AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
+      AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
+      AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
       PORT: "${PORT}"
     ports:
       - "${S_PORT}:${PORT}"
