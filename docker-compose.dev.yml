@@ -1,6 +1,7 @@
 
 services:
   snippets:
+    platform: linux/x86_64
     container_name: "infra-snippets-api"
     image: ghcr.io/ingsis-jcli/snippets-dev:latest
     environment:
@@ -15,6 +16,9 @@ services:
       AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
       PORT: "${PORT}"
+      PRINTSCRIPT_URL: "${PRINTSCRIPT_URL}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
     ports:
       - "${S_PORT}:${PORT}"
 
@@ -30,6 +34,7 @@ services:
 
 
   permissions:
+    platform: linux/x86_64
     container_name: "infra-permissions-api"
     image: ghcr.io/ingsis-jcli/permissions-dev:latest
     environment:
@@ -40,6 +45,12 @@ services:
       POSTGRES_DB: "${P_POSTGRES_DB}"
       POSTGRES_HOST: "${P_POSTGRES_HOST}"
       PORT: "${PORT}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      AUTH0_AUDIENCE: "${AUTH0_AUDIENCE}"
+      AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
+      AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
+      AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
     ports:
       - "${P_PORT}:${PORT}"
 
@@ -54,6 +65,7 @@ services:
       - "${P_POSTGRES_PORT}:5432"
 
   printscript:
+    platform: linux/x86_64
     container_name: "infra-printscript-api"
     image: ghcr.io/ingsis-jcli/printscript-dev:latest
     environment:
@@ -64,6 +76,8 @@ services:
       AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
       AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
     ports:
       - "${PS_PORT}:${PORT}"
 
@@ -88,6 +102,12 @@ services:
       AZURE_HOST: "http://azurite"
       NEW_RELIC_APP_NAME: "asset-service"
       NEW_RELIC_AGENT_ENABLED: "false"
+
+  redis:
+    container_name: "redis"
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
 
 volumes:
   blob:
