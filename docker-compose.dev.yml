@@ -113,6 +113,9 @@ services:
     platform: linux/x86_64
     container_name: "infra-ui"
     image: ghcr.io/ingsis-jcli/snippet-ui:latest
+    environment:
+      - VITE_AUTH0_DOMAIN=${VITE_AUTH0_DOMAIN}
+      - VITE_AUTH0_CLIENT_ID=${VITE_AUTH0_CLIENT_ID}
     ports:
       - "3000:80"
 
