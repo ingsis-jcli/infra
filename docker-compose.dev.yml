@@ -51,6 +51,9 @@ services:
       AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
       AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "permissions-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${P_PORT}:${PORT}"
 
@@ -101,7 +104,7 @@ services:
     environment:
       AZURE_HOST: "http://azurite"
       NEW_RELIC_APP_NAME: "asset-service"
-      NEW_RELIC_AGENT_ENABLED: "false"
+      NEW_RELIC_AGENT_ENABLED: "true"
 
   redis:
     container_name: "redis"
@@ -132,6 +135,22 @@ services:
       - snippets
       - permissions
       - printscript
+
+  newrelic-agent:
+    container_name: newrelic-infra
+    build:
+      context: .
+      dockerfile: newrelic-infra.dockerfile
+    cap_add:
+      - SYS_PTRACE
+    network_mode: bridge
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
+
 
 volumes:
   blob:
