@@ -53,6 +53,9 @@ services:
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
       AUTH_MANAGEMENT_CLIENT_ID: "${AUTH_MANAGEMENT_CLIENT_ID}"
       AUTH_MANAGEMENT_CLIENT_SECRET: "${AUTH_MANAGEMENT_CLIENT_SECRET}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "permissions-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${P_PORT}:${PORT}"
 
@@ -134,6 +137,29 @@ services:
       - snippets
       - permissions
       - printscript
+
+  newrelic-agent:
+    container_name: newrelic-infra
+    build:
+      context: .
+      dockerfile: newrelic-infra.dockerfile
+    cap_add:
+      - SYS_PTRACE
+    network_mode: bridge
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=${DUCK_SUBDOMAIN}
+      - TOKEN=${DUCK_TOKEN}
+    restart: unless-stopped
 
 volumes:
   blob:
