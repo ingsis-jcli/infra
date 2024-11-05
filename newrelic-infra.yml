@@ -1,8 +1,4 @@
-license_key: 12857c80ab5911f9772069f5b93957b1FFFFNRAL
+license_key: ${NEW_RELIC_LICENSE_KEY}
+
 enable_process_metrics: true
 verbose: 1
-logs:
-  - name: permissions-service
-    file: /proc/1/fd/1
-    attributes:
-      service: permissions-service
