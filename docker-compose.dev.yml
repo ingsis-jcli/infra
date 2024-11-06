@@ -19,6 +19,9 @@ services:
       PRINTSCRIPT_URL: "${PRINTSCRIPT_URL}"
       REDIS_HOST: "${REDIS_HOST}"
       REDIS_PORT: "${REDIS_PORT}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "snippets-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${S_PORT}:${PORT}"
 
@@ -83,6 +86,9 @@ services:
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
       REDIS_HOST: "${REDIS_HOST}"
       REDIS_PORT: "${REDIS_PORT}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "printscript-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${PS_PORT}:${PORT}"
 
