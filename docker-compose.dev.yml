@@ -1,7 +1,7 @@
-version: '3'
 
 services:
   snippets:
+    platform: linux/x86_64
     container_name: "infra-snippets-api"
     image: ghcr.io/ingsis-jcli/snippets-dev:latest
     environment:
@@ -11,7 +11,17 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: "${S_POSTGRES_DB}"
       POSTGRES_HOST: "${S_POSTGRES_HOST}"
+      AUTH0_AUDIENCE: "${AUTH0_AUDIENCE}"
+      AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
+      AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
+      AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
       PORT: "${PORT}"
+      PRINTSCRIPT_URL: "${PRINTSCRIPT_URL}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "snippets-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${S_PORT}:${PORT}"
 
@@ -27,6 +37,7 @@ services:
 
 
   permissions:
+    platform: linux/x86_64
     container_name: "infra-permissions-api"
     image: ghcr.io/ingsis-jcli/permissions-dev:latest
     environment:
@@ -37,6 +48,17 @@ services:
       POSTGRES_DB: "${P_POSTGRES_DB}"
       POSTGRES_HOST: "${P_POSTGRES_HOST}"
       PORT: "${PORT}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      AUTH0_AUDIENCE: "${AUTH0_AUDIENCE}"
+      AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
+      AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
+      AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
+      AUTH_MANAGEMENT_CLIENT_ID: "${AUTH_MANAGEMENT_CLIENT_ID}"
+      AUTH_MANAGEMENT_CLIENT_SECRET: "${AUTH_MANAGEMENT_CLIENT_SECRET}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "permissions-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${P_PORT}:${PORT}"
 
@@ -51,6 +73,7 @@ services:
       - "${P_POSTGRES_PORT}:5432"
 
   printscript:
+    platform: linux/x86_64
     container_name: "infra-printscript-api"
     image: ghcr.io/ingsis-jcli/printscript-dev:latest
     environment:
@@ -61,5 +84,89 @@ services:
       AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
       AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "printscript-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${PS_PORT}:${PORT}"
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: "azurite"
+    hostname: azurite
+    restart: always
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - blob:/workspace
+
+  asset-api:
+    container_name: "asset_service"
+    image: ghcr.io/austral-ingsis/snippet-asset-service:latest
+    ports:
+      - "${BUCKET_PORT}:8080"
+    environment:
+      AZURE_HOST: "http://azurite"
+      NEW_RELIC_APP_NAME: "asset-service"
+      NEW_RELIC_AGENT_ENABLED: "false"
+
+  redis:
+    container_name: "redis"
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+
+  ui-service:
+    platform: linux/x86_64
+    container_name: "infra-ui"
+    image: ghcr.io/ingsis-jcli/snippet-ui:latest
+    ports:
+      - "3000:80"
+
+  nginx:
+    container_name: "reverse-proxy"
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./conf.d/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./static/:/usr/share/nginx/html:ro
+      - /etc/letsencrypt/live/snippetsearcherjcli.duckdns.org:/etc/letsencrypt/live/snippetsearcherjcli.duckdns.org:ro
+      - /etc/letsencrypt/archive/snippetsearcherjcli.duckdns.org:/etc/letsencrypt/archive/snippetsearcherjcli.duckdns.org:ro
+    depends_on:
+      - ui-service
+      - snippets
+      - permissions
+      - printscript
+
+  newrelic-agent:
+    container_name: newrelic-infra
+    build:
+      context: .
+      dockerfile: newrelic-infra.dockerfile
+    cap_add:
+      - SYS_PTRACE
+    network_mode: bridge
+    pid: host
+    privileged: true
+    volumes:
+      - "/:/host:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart: unless-stopped
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=${DUCK_SUBDOMAIN}
+      - TOKEN=${DUCK_TOKEN}
+    restart: unless-stopped
+
+volumes:
+  blob:
+    external: false
