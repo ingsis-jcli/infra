@@ -12,6 +12,12 @@ services:
       POSTGRES_DB: "${S_POSTGRES_DB}"
       POSTGRES_HOST: "${S_POSTGRES_HOST}"
       PORT: "${PORT}"
+      PRINTSCRIPT_URL: "${PRINTSCRIPT_URL}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "snippets-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${S_PORT}:${PORT}"
     depends_on:
@@ -42,6 +48,17 @@ services:
       POSTGRES_DB: "${P_POSTGRES_DB}"
       POSTGRES_HOST: "${P_POSTGRES_HOST}"
       PORT: "${PORT}"
+      REDIS_HOST: "${REDIS_HOST}"
+      REDIS_PORT: "${REDIS_PORT}"
+      AUTH0_AUDIENCE: "${AUTH0_AUDIENCE}"
+      AUTH_SERVER_URI: "${AUTH_SERVER_URI}"
+      AUTH_CLIENT_ID: "${AUTH_CLIENT_ID}"
+      AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
+      AUTH_MANAGEMENT_CLIENT_ID: "${AUTH_MANAGEMENT_CLIENT_ID}"
+      AUTH_MANAGEMENT_CLIENT_SECRET: "${AUTH_MANAGEMENT_CLIENT_SECRET}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "permissions-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${P_PORT}:${PORT}"
     depends_on:
@@ -73,6 +90,9 @@ services:
       AUTH_CLIENT_SECRET: "${AUTH_CLIENT_SECRET}"
       REDIS_HOST: "${REDIS_HOST}"
       REDIS_PORT: "${REDIS_PORT}"
+      NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
+      NEW_RELIC_APP_NAME: "printscript-service"
+      NEW_RELIC_AGENT_ENABLED: "true"
     ports:
       - "${PS_PORT}:${PORT}"
     depends_on:
