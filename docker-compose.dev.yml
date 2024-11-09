@@ -22,7 +22,7 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "snippets-service"
       NEW_RELIC_AGENT_ENABLED: "true"
-      NEW_RELIC_LOG_EXTENSION_ADD_MDC: true
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
     ports:
       - "${S_PORT}:${PORT}"
     depends_on:
@@ -65,7 +65,7 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "permissions-service"
       NEW_RELIC_AGENT_ENABLED: "true"
-      NEW_RELIC_LOG_EXTENSION_ADD_MDC: true
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
 
 
     ports:
