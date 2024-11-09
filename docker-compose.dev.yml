@@ -25,6 +25,10 @@ services:
       NEW_RELIC_LOG_EXTENSION_ADD_MDC: true
     ports:
       - "${S_PORT}:${PORT}"
+    depends_on:
+      - db-snippets
+      - redis
+    restart: unless-stopped
 
   db-snippets:
     container_name: "${S_POSTGRES_HOST}"
@@ -35,6 +39,7 @@ services:
       POSTGRES_DB: "${S_POSTGRES_DB}"
     ports:
       - "${S_POSTGRES_PORT}:5432"
+    restart: unless-stopped
 
 
   permissions:
@@ -65,6 +70,9 @@ services:
 
     ports:
       - "${P_PORT}:${PORT}"
+    depends_on:
+      - db-permissions
+    restart: unless-stopped
 
   db-permissions:
     container_name: "${P_POSTGRES_HOST}"
@@ -75,6 +83,7 @@ services:
       POSTGRES_DB: "${P_POSTGRES_DB}"
     ports:
       - "${P_POSTGRES_PORT}:5432"
+    restart: unless-stopped
 
   printscript:
     platform: linux/x86_64
@@ -96,12 +105,15 @@ services:
       NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
     ports:
       - "${PS_PORT}:${PORT}"
+    depends_on:
+      - redis
+    restart: unless-stopped
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: "azurite"
     hostname: azurite
-    restart: always
+    restart: unless-stopped
     ports:
       - "10000:10000"
       - "10001:10001"
@@ -118,12 +130,14 @@ services:
       AZURE_HOST: "http://azurite"
       NEW_RELIC_APP_NAME: "asset-service"
       NEW_RELIC_AGENT_ENABLED: "false"
+    restart: unless-stopped
 
   redis:
     container_name: "redis"
     image: redis:6-alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
 
   ui-service:
     platform: linux/x86_64
@@ -131,6 +145,7 @@ services:
     image: ghcr.io/ingsis-jcli/snippet-ui:latest
     ports:
       - "3000:80"
+    restart: unless-stopped
 
   nginx:
     container_name: "reverse-proxy"
@@ -148,6 +163,7 @@ services:
       - snippets
       - permissions
       - printscript
+    restart: unless-stopped
 
 
   duckdns:
