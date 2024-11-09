@@ -22,8 +22,13 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "snippets-service"
       NEW_RELIC_AGENT_ENABLED: "true"
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
     ports:
       - "${S_PORT}:${PORT}"
+    depends_on:
+      - db-snippets
+      - redis
+    restart: unless-stopped
 
   db-snippets:
     container_name: "${S_POSTGRES_HOST}"
@@ -34,6 +39,7 @@ services:
       POSTGRES_DB: "${S_POSTGRES_DB}"
     ports:
       - "${S_POSTGRES_PORT}:5432"
+    restart: unless-stopped
 
 
   permissions:
@@ -59,8 +65,14 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "permissions-service"
       NEW_RELIC_AGENT_ENABLED: "true"
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
+
+
     ports:
       - "${P_PORT}:${PORT}"
+    depends_on:
+      - db-permissions
+    restart: unless-stopped
 
   db-permissions:
     container_name: "${P_POSTGRES_HOST}"
@@ -71,6 +83,7 @@ services:
       POSTGRES_DB: "${P_POSTGRES_DB}"
     ports:
       - "${P_POSTGRES_PORT}:5432"
+    restart: unless-stopped
 
   printscript:
     platform: linux/x86_64
@@ -89,14 +102,18 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "printscript-service"
       NEW_RELIC_AGENT_ENABLED: "true"
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
     ports:
       - "${PS_PORT}:${PORT}"
+    depends_on:
+      - redis
+    restart: unless-stopped
 
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: "azurite"
     hostname: azurite
-    restart: always
+    restart: unless-stopped
     ports:
       - "10000:10000"
       - "10001:10001"
@@ -113,12 +130,14 @@ services:
       AZURE_HOST: "http://azurite"
       NEW_RELIC_APP_NAME: "asset-service"
       NEW_RELIC_AGENT_ENABLED: "false"
+    restart: unless-stopped
 
   redis:
     container_name: "redis"
     image: redis:6-alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
 
   ui-service:
     platform: linux/x86_64
@@ -126,6 +145,7 @@ services:
     image: ghcr.io/ingsis-jcli/snippet-ui:latest
     ports:
       - "3000:80"
+    restart: unless-stopped
 
   nginx:
     container_name: "reverse-proxy"
@@ -143,21 +163,8 @@ services:
       - snippets
       - permissions
       - printscript
-
-  newrelic-agent:
-    container_name: newrelic-infra
-    build:
-      context: .
-      dockerfile: newrelic-infra.dockerfile
-    cap_add:
-      - SYS_PTRACE
-    network_mode: bridge
-    pid: host
-    privileged: true
-    volumes:
-      - "/:/host:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock"
     restart: unless-stopped
+
 
   duckdns:
     image: lscr.io/linuxserver/duckdns:latest
