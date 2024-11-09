@@ -22,6 +22,7 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "snippets-service"
       NEW_RELIC_AGENT_ENABLED: "true"
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: true
     ports:
       - "${S_PORT}:${PORT}"
 
@@ -59,6 +60,9 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "permissions-service"
       NEW_RELIC_AGENT_ENABLED: "true"
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: true
+
+
     ports:
       - "${P_PORT}:${PORT}"
 
@@ -89,6 +93,7 @@ services:
       NEW_RELIC_LICENSE_KEY: "${NEW_RELIC_LICENSE_KEY}"
       NEW_RELIC_APP_NAME: "printscript-service"
       NEW_RELIC_AGENT_ENABLED: "true"
+      NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
     ports:
       - "${PS_PORT}:${PORT}"
 
@@ -144,20 +149,6 @@ services:
       - permissions
       - printscript
 
-  newrelic-agent:
-    container_name: newrelic-infra
-    build:
-      context: .
-      dockerfile: newrelic-infra.dockerfile
-    cap_add:
-      - SYS_PTRACE
-    network_mode: bridge
-    pid: host
-    privileged: true
-    volumes:
-      - "/:/host:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    restart: unless-stopped
 
   duckdns:
     image: lscr.io/linuxserver/duckdns:latest
