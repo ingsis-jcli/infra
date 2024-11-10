@@ -1,4 +1,3 @@
-version: '3'
 
 services:
   snippets:
@@ -42,7 +41,8 @@ services:
       - "${S_POSTGRES_PORT}:5432"
     restart: unless-stopped
 
-  ermissions:
+
+  permissions:
     platform: linux/x86_64
     container_name: "infra-permissions-api"
     image: ghcr.io/ingsis-jcli/permissions:latest
@@ -66,6 +66,8 @@ services:
       NEW_RELIC_APP_NAME: "permissions-service"
       NEW_RELIC_AGENT_ENABLED: "true"
       NEW_RELIC_LOG_EXTENSION_ADD_MDC: "true"
+
+
     ports:
       - "${P_PORT}:${PORT}"
     depends_on:
@@ -162,6 +164,7 @@ services:
       - permissions
       - printscript
     restart: unless-stopped
+
 
   duckdns:
     image: lscr.io/linuxserver/duckdns:latest
