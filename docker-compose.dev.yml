@@ -142,7 +142,7 @@ services:
   ui-service:
     platform: linux/x86_64
     container_name: "infra-ui"
-    image: ghcr.io/ingsis-jcli/snippet-ui:latest
+    image: ghcr.io/ingsis-jcli/snippet-ui-dev:latest
     ports:
       - "3000:80"
     restart: unless-stopped
