@@ -4,6 +4,7 @@ services:
     platform: linux/x86_64
     container_name: "infra-snippets-api"
     image: ghcr.io/ingsis-jcli/snippets-dev:latest
+    mem_limit: 512m
     environment:
       GITHUB_ACTOR: "${GITHUB_ACTOR}"
       GITHUB_TOKEN: "${GITHUB_TOKEN}"
@@ -46,6 +47,7 @@ services:
     platform: linux/x86_64
     container_name: "infra-permissions-api"
     image: ghcr.io/ingsis-jcli/permissions-dev:latest
+    mem_limit: 512m
     environment:
       GITHUB_ACTOR: "${GITHUB_ACTOR}"
       GITHUB_TOKEN: "${GITHUB_TOKEN}"
@@ -89,6 +91,7 @@ services:
     platform: linux/x86_64
     container_name: "infra-printscript-api"
     image: ghcr.io/ingsis-jcli/printscript-dev:latest
+    mem_limit: 512m
     environment:
       GITHUB_ACTOR: "${GITHUB_ACTOR}"
       GITHUB_TOKEN: "${GITHUB_TOKEN}"
@@ -142,7 +145,7 @@ services:
   ui-service:
     platform: linux/x86_64
     container_name: "infra-ui"
-    image: ghcr.io/ingsis-jcli/snippet-ui:latest
+    image: ghcr.io/ingsis-jcli/snippet-ui-dev:latest
     ports:
       - "3000:80"
     restart: unless-stopped
